@@ -1,8 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
+/** FINISH THREAD */
+
 import {
   LogBox,
   SafeAreaView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -27,6 +30,13 @@ import {
   Thread,
   ThreadContextValue,
 } from 'stream-chat-react-native/v2';
+import { useRef } from 'react';
+// @ts-expect-error
+import Keyboard from 'react-native-ui-lib/keyboard';
+const KeyboardRegistry = Keyboard.KeyboardRegistry;
+
+import { SelectorKeyboard } from './SelectorKeyboard';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 LogBox.ignoreAllLogs(true);
 enableScreens();
@@ -133,37 +143,54 @@ type ChannelScreenProps = {
 const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   const { channel, setThread, thread } = useContext(AppContext);
   const headerHeight = useHeaderHeight();
+  const inputRef = useRef<TextInput | null>(null);
+  const [currentKeyboard, setCurrentKeyboard] = useState<string | undefined>();
 
   return (
-    <SafeAreaView>
-      <Chat client={chatClient} i18nInstance={streami18n}>
-        <Channel
-          channel={channel}
-          keyboardVerticalOffset={headerHeight}
-          thread={thread}
-        >
-          <View style={{ flex: 1 }}>
-            <MessageList<
-              LocalAttachmentType,
-              LocalChannelType,
-              LocalCommandType,
-              LocalEventType,
-              LocalMessageType,
-              LocalResponseType,
-              LocalUserType
-            >
-              onThreadSelect={(thread) => {
-                setThread(thread);
-                if (channel?.id) {
-                  navigation.navigate('Thread', { channelId: channel.id });
-                }
-              }}
+    <SafeAreaProvider>
+      <SafeAreaView>
+        <Chat client={chatClient} i18nInstance={streami18n}>
+          <Channel
+            channel={channel}
+            keyboardVerticalOffset={headerHeight}
+            thread={thread}
+          >
+            <View style={{ flex: 1 }}>
+              <MessageList<
+                LocalAttachmentType,
+                LocalChannelType,
+                LocalCommandType,
+                LocalEventType,
+                LocalMessageType,
+                LocalResponseType,
+                LocalUserType
+              >
+                onThreadSelect={(thread) => {
+                  setThread(thread);
+                  if (channel?.id) {
+                    navigation.navigate('Thread', { channelId: channel.id });
+                  }
+                }}
+              />
+              <MessageInput setInputRef={(ref) => (inputRef.current = ref)} />
+              <TouchableOpacity
+                onPress={() => {
+                  KeyboardRegistry.requestShowKeyboard('CameraRollKeyboard');
+                  setCurrentKeyboard('CameraRollKeyboard');
+                }}
+              >
+                <Text>Hello</Text>
+              </TouchableOpacity>
+            </View>
+            <SelectorKeyboard
+              inputRef={inputRef}
+              currentKeyboard={currentKeyboard}
+              setCurrentKeyboard={setCurrentKeyboard}
             />
-            <MessageInput />
-          </View>
-        </Channel>
-      </Chat>
-    </SafeAreaView>
+          </Channel>
+        </Chat>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

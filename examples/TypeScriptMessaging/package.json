@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@react-native-community/blur": "3.6.0",
+    "@react-native-community/cameraroll": "^4.0.1",
+    "@react-native-community/datetimepicker": "^3.0.6",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/netinfo": "5.9.7",
+    "@react-native-community/picker": "^1.8.1",
     "@react-navigation/native": "5.8.9",
     "@react-navigation/stack": "5.12.6",
     "react": "16.13.1",
@@ -28,6 +31,7 @@
     "react-native-screens": "2.14.0",
     "react-native-share": "4.1.0",
     "react-native-svg": "12.1.0",
+    "react-native-ui-lib": "^5.16.1",
     "stream-chat": "2.7.4",
     "stream-chat-react-native": "link:../../native-package"
   },
