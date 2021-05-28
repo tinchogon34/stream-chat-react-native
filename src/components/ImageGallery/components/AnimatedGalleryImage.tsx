@@ -58,17 +58,11 @@ export const AnimatedGalleryImage: React.FC<Props> = React.memo(
               : scale.value < 1 || scale.value !== offsetScale.value
               ? xScaleOffset
               : previous
-              ? translateX.value -
-                halfScreenWidth * (scale.value - 1) +
-                xScaleOffset
-              : translateX.value +
-                halfScreenWidth * (scale.value - 1) +
-                xScaleOffset,
+              ? translateX.value - halfScreenWidth * (scale.value - 1) + xScaleOffset
+              : translateX.value + halfScreenWidth * (scale.value - 1) + xScaleOffset,
           },
           {
-            translateY: selected
-              ? translateY.value + yScaleOffset
-              : yScaleOffset,
+            translateY: selected ? translateY.value + yScaleOffset : yScaleOffset,
           },
           {
             scale: selected ? scale.value / 8 : oneEight,
