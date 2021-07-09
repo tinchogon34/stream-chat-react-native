@@ -3,8 +3,8 @@ const commitRegx = /^(\w*)(?:\((.*)\))?: (.*)$/;
 module.exports = Promise.resolve()
   .then(() => require('conventional-changelog-angular'))
   .then((preset) => {
-    const currentPackage = process.cwd().split('/').pop();
-    const isSDK = currentPackage === 'package';
+    // const currentPackage = process.cwd().split('/').pop();
+    // const isSDK = currentPackage === 'package';
 
     const plugins = [
       [
@@ -64,23 +64,27 @@ module.exports = Promise.resolve()
           // npmPublish: isSDK,
         },
       ],
-      [
-        '@semantic-release/git',
-        {
-          assets: [
-            `${process.cwd()}/package.json`,
-            `${process.cwd()}/yarn.lock.json`,
-            '`${process.cwd()}/CHANGELOG.md`',
-          ],
-          message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
-        },
-      ],
     ];
 
-    console.log(process.env);
-
+    if (process.env.GIT_BRANCH === 'master') {
+      plugins.concat([
+        [
+          '@semantic-release/git',
+          {
+            assets: [
+              `${process.cwd()}/package.json`,
+              `${process.cwd()}/yarn.lock.json`,
+              '`${process.cwd()}/CHANGELOG.md`',
+            ],
+            message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
+          },
+        ],
+        '@semantic-release/github',
+      ]);
+    }
+    console.log(process.env.TAG_FORMAT);
     return {
-      tagFormat: process.env.TAG_FORMAT,
+      //   tagFormat: process.env.TAG_FORMAT,
       branches: [
         'master',
         // { name: 'staging', channel: 'rc', prerelease: 'rc' },

@@ -14,7 +14,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "postinstall": "patch-package",
-    "semantic-release": "TAG_FORMAT=$npm_package_name'@${version}' semantic-release -e ../../node_modules/semantic-release-monorepo -e ../../release.config.js"
+    "semantic-release": "TAG_FORMAT=$npm_package_name'@${version}' GIT_BRANCH=\"$(git branch --show-current)\" semantic-release -e ../../node_modules/semantic-release-monorepo -e ../../release.config.js"
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
