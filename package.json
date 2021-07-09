@@ -21,7 +21,7 @@
     }
   },
   "scripts": {
-    "postinstall": "patch-package"
+    "postinstall": "yarn workspaces run install && patch-package"
   },
   "workspaces": [
     "package",
