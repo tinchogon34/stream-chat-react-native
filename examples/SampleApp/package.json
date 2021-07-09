@@ -13,7 +13,8 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "semantic-release": "TAG_FORMAT=$npm_package_name'@${version}' semantic-release -e ../../node_modules/semantic-release-monorepo -e ../../release.config.js"
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
@@ -63,6 +64,7 @@
     "jest": "26.6.3",
     "metro-react-native-babel-preset": "0.66.0",
     "react-test-renderer": "17.0.2",
+    "semantic-release": "^17.4.4",
     "typescript": "4.2.4"
   },
   "jest": {

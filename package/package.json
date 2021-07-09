@@ -39,6 +39,7 @@
     "validate-translations": "node bin/validate-translations.js",
     "get-version": "echo $npm_package_version",
     "version": "bash ./bin/before-tag.sh",
+    "semantic-release": "TAG_FORMAT=$npm_package_name'@${version}' semantic-release -e ../node_modules/semantic-release-monorepo -e ../release.config.js",
     "prepublishOnly": "echo 'running prepublishOnly for core package' && bash ./bin/before-tag.sh && bash ./bin/release.sh && echo 'finished running prepublishOnly for core package'"
   },
   "react-native-builder-bob": {
@@ -135,6 +136,7 @@
     "react-native-web": "0.15.0",
     "react-styleguidist": "11.1.6",
     "react-test-renderer": "17.0.2",
+    "semantic-release": "^17.4.4",
     "typescript": "4.2.4",
     "uuid": "8.3.2",
     "webpack": "4.44.2"
