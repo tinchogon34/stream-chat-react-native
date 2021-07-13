@@ -12,6 +12,7 @@
     "@semantic-release/git": "^9.0.0",
     "husky": "^6.0.0",
     "lerna": "^4.0.0",
+    "semantic-release": "^17.4.4",
     "semantic-release-monorepo": "^7.0.5"
   },
   "husky": {
@@ -21,12 +22,11 @@
     }
   },
   "scripts": {
-    "postinstall": "yarn workspaces run install && patch-package"
+    "postinstall": "patch-package",
+    "lerna": "lerna",
+    "release-dry": "lerna exec \"yarn semantic-release --dry-run\"",
+    "release": "lerna exec \"yarn semantic-release\""
   },
-  "workspaces": [
-    "package",
-    "examples/SampleApp"
-  ],
   "dependencies": {
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0"

@@ -1,6 +1,7 @@
 {
   "packages": ["package", "examples/SampleApp"],
   "version": "independent",
+  "npmClient": "yarn",
   "command": {
     "version": {
       "message": "chore(release): version bump [skip ci]",
