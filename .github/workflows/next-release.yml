@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - workspaces
+    paths:
+      - package/**
 
 jobs:
   publish-next:
