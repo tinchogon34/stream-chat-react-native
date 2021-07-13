@@ -53,21 +53,21 @@ module.exports = Promise.resolve()
       [
         '@semantic-release/changelog',
         {
-          changelogTitle: '#Changelog',
+          changelogTitle: '# Change Log',
           changelogFile: `${process.cwd()}/CHANGELOG.md`,
-        },
-      ],
-      [
-        '@semantic-release/npm',
-        {
-          npmPublish: false,
-          // npmPublish: isSDK,
         },
       ],
     ];
 
     if (process.env.GIT_BRANCH === 'master') {
       plugins.concat([
+        [
+          '@semantic-release/npm',
+          {
+            npmPublish: false,
+            // npmPublish: isSDK,
+          },
+        ],
         [
           '@semantic-release/git',
           {
@@ -84,7 +84,7 @@ module.exports = Promise.resolve()
     }
     console.log(process.env.TAG_FORMAT);
     return {
-      //   tagFormat: process.env.TAG_FORMAT,
+      tagFormat: process.env.TAG_FORMAT,
       branches: [
         'master',
         // { name: 'staging', channel: 'rc', prerelease: 'rc' },
