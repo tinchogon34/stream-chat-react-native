@@ -1103,28 +1103,7 @@ export const ImageGallery = <
                             ],
                           },
                         ]}
-                      >
-                        {photos.map((photo, i) => (
-                          <AnimatedGalleryImage
-                            index={i}
-                            key={`${photo.uri}-${i}`}
-                            offsetScale={offsetScale}
-                            photo={photo}
-                            previous={selectedIndex > i}
-                            scale={scale}
-                            screenHeight={screenHeight}
-                            selected={selectedIndex === i}
-                            shouldRender={Math.abs(selectedIndex - i) < 4}
-                            style={{
-                              height: screenHeight * 8,
-                              marginRight: MARGIN,
-                              width: screenWidth * 8,
-                            }}
-                            translateX={translateX}
-                            translateY={translateY}
-                          />
-                        ))}
-                      </Animated.View>
+                      ></Animated.View>
                     </Animated.View>
                   </PanGestureHandler>
                 </Animated.View>

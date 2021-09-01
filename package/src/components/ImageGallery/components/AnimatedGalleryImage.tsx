@@ -82,6 +82,7 @@ export const AnimatedGalleryImage: React.FC<Props> = React.memo(
       return <View style={[style, { transform: [{ scale: oneEight }] }]} />;
     }
 
+
     return (
       <Animated.Image
         resizeMode={'contain'}

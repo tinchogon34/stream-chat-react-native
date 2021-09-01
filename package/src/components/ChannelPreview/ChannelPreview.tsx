@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useLatestMessagePreview } from './hooks/useLatestMessagePreview';
+import { lightThrottle } from '../Channel/utils/throttle';
 
 import { ChatContextValue, useChatContext } from '../../contexts/chatContext/ChatContext';
 import {
@@ -83,17 +84,17 @@ const ChannelPreviewWithContext = <
     }
   }, [channelLastMessageString]);
 
+  const handleEvent = lightThrottle((event: Event<At, Ch, Co, Ev, Me, Re, Us>) => {
+    if (event.message) {
+      setLastMessage(event.message);
+    }
+
+    if (event.type === 'message.new') {
+      setUnread(channel.countUnread());
+    }
+  }, 2000);
+
   useEffect(() => {
-    const handleEvent = (event: Event<At, Ch, Co, Ev, Me, Re, Us>) => {
-      if (event.message) {
-        setLastMessage(event.message);
-      }
-
-      if (event.type === 'message.new') {
-        setUnread(channel.countUnread());
-      }
-    };
-
     channel.on('message.new', handleEvent);
     channel.on('message.updated', handleEvent);
     channel.on('message.deleted', handleEvent);

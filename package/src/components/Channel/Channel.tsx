@@ -678,6 +678,7 @@ const ChannelWithContext = <
   });
 
   const copyChannelState = lightThrottle(() => {
+    console.log('called');
     setLoading(false);
     if (channel) {
       setMembers({ ...channel.state.members });
@@ -687,7 +688,7 @@ const ChannelWithContext = <
       setWatcherCount(channel.state.watcher_count);
       setWatchers({ ...channel.state.watchers });
     }
-  });
+  }, 2000);
 
   const connectionRecoveredHandler = () => {
     if (channel && shouldSyncChannel) {

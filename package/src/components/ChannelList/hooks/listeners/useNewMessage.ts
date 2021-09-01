@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { moveChannelUp } from '../../utils';
 
 import { useChatContext } from '../../../../contexts/chatContext/ChatContext';
+import { lightThrottle } from '../../../Channel/utils/throttle';
 
 import type { Channel, Event } from 'stream-chat';
 
@@ -44,19 +45,19 @@ export const useNewMessage = <
 }: Parameters<At, Ch, Co, Ev, Me, Re, Us>) => {
   const { client } = useChatContext<At, Ch, Co, Ev, Me, Re, Us>();
 
-  useEffect(() => {
-    const handleEvent = (event: Event<At, Ch, Co, Ev, Me, Re, Us>) => {
-      setChannels((channels) => {
-        if (!lockChannelOrder && event.cid) {
-          return moveChannelUp<At, Ch, Co, Ev, Me, Re, Us>({
-            channels,
-            cid: event.cid,
-          });
-        }
-        return [...channels];
-      });
-    };
+  const handleEvent = lightThrottle((event: Event<At, Ch, Co, Ev, Me, Re, Us>) => {
+    return setChannels((channels) => {
+      if (!lockChannelOrder && event.cid) {
+        return moveChannelUp<At, Ch, Co, Ev, Me, Re, Us>({
+          channels,
+          cid: event.cid,
+        });
+      }
+      return [...channels];
+    });
+  }, 2000);
 
+  useEffect(() => {
     client.on('message.new', handleEvent);
     return () => client.off('message.new', handleEvent);
   }, []);
