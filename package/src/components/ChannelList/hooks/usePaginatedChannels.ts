@@ -111,6 +111,11 @@ export const usePaginatedChannels = <
       setOffset(newChannels.length);
       setError(false);
       querying.current = false;
+      // Once client.queryChannels remove old data from the client cache, we just synchronize the cache and images in order to
+      // remove older cached images
+      if (cacheInstance) {
+        cacheInstance?.syncCacheAndImages();
+      }
     } catch (err) {
       querying.current = false;
       await wait(2000);

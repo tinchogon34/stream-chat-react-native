@@ -81,7 +81,7 @@
     "path": "0.12.7",
     "react-art": "^17.0.2",
     "react-native-markdown-package": "1.8.1",
-    "stream-chat": "~4.0.0"
+    "stream-chat": "4.0.0-offline-caching.1"
   },
   "peerDependencies": {
     "react": "*",
@@ -136,6 +136,7 @@
     "react-dom": "17.0.2",
     "react-native": "0.64.1",
     "react-native-builder-bob": "0.18.1",
+    "react-native-fs": "2.18.0",
     "react-native-gesture-handler": "1.10.3",
     "react-native-reanimated": "2.1.0",
     "react-native-svg": "12.1.1",
