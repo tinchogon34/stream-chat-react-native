@@ -132,8 +132,6 @@ export class StreamCache<
   private client: StreamChat<At, Ch, Co, Ev, Me, Re, Us>;
   private cacheInterface: CacheInterface<At, Ch, Co, Me, Re, Us>;
   private currentNetworkState: boolean | null;
-  private initialNetworkStatePromise: Promise<boolean>;
-  private resolveInitialNetworkState?: (value: boolean | PromiseLike<boolean>) => void;
   private cachedChannelsOrder: ChannelsOrder;
   private orderedChannels: { [index: string]: Channel<At, Ch, Co, Ev, Me, Re, Us>[] };
   private tokenOrProvider: TokenOrProvider;
@@ -150,7 +148,6 @@ export class StreamCache<
     this.client = client;
     this.cacheInterface = cacheInterface;
     this.currentNetworkState = null;
-    this.initialNetworkStatePromise = new Promise((res) => (this.resolveInitialNetworkState = res));
     this.cachedChannelsOrder = {};
     this.orderedChannels = {};
     this.tokenOrProvider = tokenOrProvider;
@@ -221,13 +218,9 @@ export class StreamCache<
     });
 
     NetInfo.addEventListener((state) => {
-      if (
-        state.isInternetReachable !== null &&
-        this.currentNetworkState === null &&
-        this.resolveInitialNetworkState
-      ) {
+      if (state.isInternetReachable !== null && this.currentNetworkState === null) {
         this.currentNetworkState = state.isConnected && state.isInternetReachable;
-        return this.resolveInitialNetworkState(this.currentNetworkState);
+        return;
       }
 
       if (state.isConnected && state.isInternetReachable && !this.currentNetworkState) {
@@ -237,16 +230,6 @@ export class StreamCache<
         this.currentNetworkState = false;
       }
     });
-  }
-
-  private connect(clientData: ClientStateAndData<Ch, Co, Us>) {
-    // TODO: Maybe a way to allow user to customize this? Ask Vish if needed
-    const user = {
-      id: clientData.user?.id,
-      name: clientData.user?.name,
-    } as OwnUserResponse<Ch, Co, Us> | UserResponse<Us>;
-
-    return this.client.connectUser(user, this.tokenOrProvider);
   }
 
   private offlineConnect(clientData: ClientStateAndData<Ch, Co, Us>) {
@@ -391,26 +374,16 @@ export class StreamCache<
     }
   }
 
-  public async initialize() {
+  public async initialize({ openConnection = true } = {}) {
     const clientData = await this.cacheInterface.getItem(STREAM_CHAT_CLIENT_DATA);
     if (clientData) {
-      const hasNetwork = await this.initialNetworkStatePromise;
-
-      const promises = [];
-
-      if (hasNetwork) {
-        promises.push(this.connect(clientData));
-      } else {
-        // If there is no connection, dont wait for authenticate (aka connectUser), just use it to
-        // initialize user/socket on the client side
-        this.offlineConnect(clientData);
+      await this.offlineConnect(clientData);
+      await this.rehydrate(clientData);
+      // If users want to manually control the socket connection when offline, just send this parameter as false
+      if (openConnection) {
+        this.client.openConnection();
       }
-
-      promises.push(this.rehydrate(clientData));
-
-      return Promise.all(promises);
     }
-    return null;
   }
 
   private getChannelsOrderKey(filters: ChannelFilters<Ch, Co, Us>, sort: ChannelSort<Ch>) {

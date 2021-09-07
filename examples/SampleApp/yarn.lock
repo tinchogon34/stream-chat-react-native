@@ -7118,10 +7118,10 @@ stream-buffers@~2.2.0:
   resolved "https://registry.npmjs.org/stream-buffers/-/stream-buffers-2.2.0.tgz"
   integrity sha1-kdX1Ew0c75bc+n9yaUUYh0HQnuQ=
 
-stream-chat-react-native-core@3.7.2:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/stream-chat-react-native-core/-/stream-chat-react-native-core-3.7.2.tgz#5cd97beb3349ead2b365e29343ad33c19c8641b7"
-  integrity sha512-XfU91ZJu8NP9EyPrU88W7VWcwrChKI0SJ+gvEyREujHKL3b31kOy7aB4PbuZ4d/imLuG4Zm5Sud6mvWPZ3hkew==
+stream-chat-react-native-core@3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/stream-chat-react-native-core/-/stream-chat-react-native-core-3.8.0.tgz#1928df5cef797c31fe37bb0c5849f36006fb5869"
+  integrity sha512-JUlfl0zgy8coFDv8727NnBfcLMGYV2pFRYGt5RfiFlPKlbUhDCjJQvHda/J23UM8UxYqvJ2VSd0O8+tVeVCeKg==
   dependencies:
     "@babel/runtime" "7.13.10"
     "@gorhom/bottom-sheet" "3.6.4"
@@ -7145,10 +7145,10 @@ stream-chat-react-native-core@3.7.2:
   version "0.0.0"
   uid ""
 
-stream-chat@~3.13.1:
-  version "3.13.1"
-  resolved "https://registry.yarnpkg.com/stream-chat/-/stream-chat-3.13.1.tgz#1692246dd74968dee7596a6a8c1e1a02656bb634"
-  integrity sha512-JWgVwRgmAE/a7P9i+LK2Lr2C4dXfRaedm2c4jKsZuMPR6KwINIy0kgdGyds3Xqmp4/LPSfhXZJ7wExmlfo9+7g==
+stream-chat@4.0.0-offline-caching.2:
+  version "4.0.0-offline-caching.2"
+  resolved "https://registry.yarnpkg.com/stream-chat/-/stream-chat-4.0.0-offline-caching.2.tgz#cb601fc9bde6a8f1f1aa32bad47bfca3d68f895f"
+  integrity sha512-caZKmiwNncvJqjYO6EixLlo6UslrgfLnIVgWGrsh8N409I1JEAWvaQaxapnSMxTcHqAaypcA+8RenfAKCXgDaQ==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@types/jsonwebtoken" "^8.5.0"
@@ -7160,10 +7160,10 @@ stream-chat@~3.13.1:
     jsonwebtoken "^8.5.1"
     ws "^7.4.4"
 
-stream-chat@~4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/stream-chat/-/stream-chat-4.0.0.tgz#7aec92015c8d1a2ee1344ca32b2f51a70cace600"
-  integrity sha512-u4oTd4d19E23t0IVj60G/DhJVNIEUUQt7SI8Zx8Rhum9GLfQ8VwXsgcJYUsLHaiIjpMVjttyoYmR/F8RP8f3+w==
+stream-chat@~3.13.1:
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/stream-chat/-/stream-chat-3.13.1.tgz#1692246dd74968dee7596a6a8c1e1a02656bb634"
+  integrity sha512-JWgVwRgmAE/a7P9i+LK2Lr2C4dXfRaedm2c4jKsZuMPR6KwINIy0kgdGyds3Xqmp4/LPSfhXZJ7wExmlfo9+7g==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@types/jsonwebtoken" "^8.5.0"

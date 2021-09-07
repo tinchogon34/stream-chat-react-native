@@ -257,7 +257,6 @@ describe('StreamCache instance', () => {
     expect(cacheInstance.client).toBe(chatClient);
     expect(cacheInstance.cacheInterface).toBe(cacheInterface);
     expect(cacheInstance.currentNetworkState).toBe(null);
-    expect(cacheInstance.initialNetworkStatePromise).toBeInstanceOf(Promise);
     expect(cacheInstance.cachedChannelsOrder).toStrictEqual({});
     expect(cacheInstance.orderedChannels).toStrictEqual({});
     expect(cacheInstance.tokenOrProvider).toBe('token');
@@ -295,7 +294,6 @@ describe('StreamCache instance', () => {
       'token',
     );
 
-    cacheInstance.connect = jest.fn();
     cacheInstance.offlineConnect = jest.fn();
     cacheInstance.rehydrate = jest.fn();
 
@@ -303,12 +301,11 @@ describe('StreamCache instance', () => {
 
     await cacheInstance.initialize();
 
-    expect(cacheInstance.connect).not.toHaveBeenCalled();
     expect(cacheInstance.offlineConnect).not.toHaveBeenCalled();
     expect(cacheInstance.rehydrate).not.toHaveBeenCalled();
   });
 
-  it('should call connect with cached data when initializing with network', async () => {
+  it('should call offlineConnect with cached data when initializing', async () => {
     const minimumData = {
       channels: [],
       client: {
@@ -326,41 +323,48 @@ describe('StreamCache instance', () => {
       'dummy_token',
     );
 
-    cacheInstance.connect = jest.fn();
     cacheInstance.offlineConnect = jest.fn();
     cacheInstance.rehydrate = jest.fn();
+    chatClient.openConnection = jest.fn();
 
     triggerNetworkListener();
 
     await cacheInstance.initialize();
 
-    expect(cacheInstance.connect).toHaveBeenCalledWith(minimumData);
+    expect(cacheInstance.offlineConnect).toHaveBeenCalledWith(minimumData);
     expect(cacheInstance.rehydrate).toHaveBeenCalledWith(minimumData);
-    expect(cacheInstance.offlineConnect).not.toHaveBeenCalled();
+    expect(chatClient.openConnection).toHaveBeenCalled();
   });
 
-  it('should call client useConnect when connect is called', () => {
-    const cacheInstance = StreamCache.getInstance(chatClient, cacheInterface, 'dummy_token');
+  it('should not call openConnection when initialized with openConnection set to false', async () => {
+    const minimumData = {
+      channels: [],
+      client: {
+        state: { userChannelReferences: {}, users: {} },
+        token: 'dummy_token',
+        user: { id: 'Neil', mutes: [] },
+      },
+    };
+
+    const mockedCacheGet = () => Promise.resolve(minimumData);
+
+    const cacheInstance = StreamCache.getInstance(
+      chatClient,
+      { ...cacheInterface, getItem: mockedCacheGet },
+      'dummy_token',
+    );
+
+    cacheInstance.offlineConnect = jest.fn();
+    cacheInstance.rehydrate = jest.fn();
+    chatClient.openConnection = jest.fn();
 
     triggerNetworkListener();
 
-    chatClient.connectUser = jest.fn();
-    chatClient.reInitializeAuthState = jest.fn();
+    await cacheInstance.initialize({ openConnection: false });
 
-    cacheInstance.connect({
-      state: { userChannelReferences: {}, users: {} },
-      token: 'dummy_token',
-      user: { id: 'Neil', mutes: [], name: 'Neil' },
-    });
-
-    expect(chatClient.connectUser).toHaveBeenCalledWith(
-      {
-        id: 'Neil',
-        name: 'Neil',
-      },
-      'dummy_token',
-    );
-    expect(chatClient.reInitializeAuthState).not.toHaveBeenCalled();
+    expect(cacheInstance.offlineConnect).toHaveBeenCalledWith(minimumData);
+    expect(cacheInstance.rehydrate).toHaveBeenCalledWith(minimumData);
+    expect(chatClient.openConnection).not.toHaveBeenCalled();
   });
 
   it('should call client reInitializeAuthState when offlineConnect is called', () => {
@@ -368,7 +372,6 @@ describe('StreamCache instance', () => {
 
     triggerNetworkListener({ isOnline: false });
 
-    chatClient.connectUser = jest.fn();
     chatClient.reInitializeAuthState = jest.fn();
 
     cacheInstance.offlineConnect({
@@ -384,7 +387,6 @@ describe('StreamCache instance', () => {
       },
       'dummy_token',
     );
-    expect(chatClient.connectUser).not.toHaveBeenCalled();
   });
 
   it('should rehydrate properly', async () => {
