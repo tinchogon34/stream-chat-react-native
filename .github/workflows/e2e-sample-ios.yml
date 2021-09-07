@@ -1,6 +1,9 @@
 name: e2e-sample-ios
 
 on:
+  push:
+    branches:
+      - offline-tests
   pull_request:
     branches:
       - develop
