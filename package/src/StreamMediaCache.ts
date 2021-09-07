@@ -9,13 +9,13 @@ const getStreamRootDir = () => `${RNFS.DocumentDirectoryPath}/StreamStorage`;
 const getStreamAvatarsDir = () => `${getStreamRootDir()}/avatars`;
 const getStreamChannelAvatarsDir = (cid: string) => `${getStreamAvatarsDir()}/${cid}`;
 
-const getStreamChannelAvatarDir = (cid: string, fileUrl: string) =>
-  `${getStreamChannelAvatarsDir(cid)}/${fileUrl}`;
+const getStreamChannelAvatarDir = (cid: string, filePathname: string) =>
+  `${getStreamChannelAvatarsDir(cid)}/${filePathname}`;
 
 const checkIfLocalAvatar = (cid: string, fileId: string) =>
   RNFS.exists(getStreamChannelAvatarDir(cid, fileId));
 
-async function saveAvatar(cid: string, fileId: string, fileUrl: string) {
+async function saveAvatar(cid: string, fileId: string, filePathname: string) {
   const avatarPath = getStreamChannelAvatarDir(cid, fileId);
   const avatarDir = avatarPath.substr(0, avatarPath.lastIndexOf('/'));
 
@@ -24,7 +24,7 @@ async function saveAvatar(cid: string, fileId: string, fileUrl: string) {
   }
 
   return RNFS.downloadFile({
-    fromUrl: fileUrl,
+    fromUrl: filePathname,
     toFile: avatarPath,
   }).promise;
 }
@@ -45,13 +45,13 @@ const getStreamChannelAttachmentsDir = (cid: string) => `${getStreamAttachmentsD
 const getStreamChannelMessageAttachmentsDir = (cid: string, mid: string) =>
   `${getStreamChannelAttachmentsDir(cid)}/${mid}`;
 
-const getStreamChannelMessageAttachmentDir = (cid: string, mid: string, fileUrl: string) =>
-  `${getStreamChannelMessageAttachmentsDir(cid, mid)}/${fileUrl}`;
+const getStreamChannelMessageAttachmentDir = (cid: string, mid: string, filePathname: string) =>
+  `${getStreamChannelMessageAttachmentsDir(cid, mid)}/${filePathname}`;
 
 const checkIfLocalAttachment = (cid: string, mid: string, fileId: string) =>
   RNFS.exists(getStreamChannelMessageAttachmentDir(cid, mid, fileId));
 
-async function saveAttachment(cid: string, mid: string, fileId: string, fileUrl: string) {
+async function saveAttachment(cid: string, mid: string, fileId: string, filePathname: string) {
   const attachmentPath = getStreamChannelMessageAttachmentDir(cid, mid, fileId);
   const attachmentDir = attachmentPath.substr(0, attachmentPath.lastIndexOf('/'));
 
@@ -60,7 +60,7 @@ async function saveAttachment(cid: string, mid: string, fileId: string, fileUrl:
   }
 
   return RNFS.downloadFile({
-    fromUrl: fileUrl,
+    fromUrl: filePathname,
     toFile: attachmentPath,
   }).promise;
 }

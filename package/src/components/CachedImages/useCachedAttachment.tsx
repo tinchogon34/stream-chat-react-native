@@ -3,16 +3,13 @@ import { useEffect, useState } from 'react';
 import { StreamCache } from '../../StreamCache';
 import StreamMediaCache from '../../StreamMediaCache';
 
+import { extractPathname } from './utils';
+
 import type { ImageURISource } from 'react-native';
 
 type GalleryImageCacheConfig = {
   channelId: string | undefined;
   messageId: string | undefined;
-};
-
-export const getAttachmentId = (uri: string | undefined) => {
-  const parsedUrl = uri?.split('?')?.[0];
-  return parsedUrl?.split(/(images|media)\//)[2];
 };
 
 export const useCachedAttachment = (config: {
@@ -28,9 +25,9 @@ export const useCachedAttachment = (config: {
     if (!StreamCache.shouldCacheMedia()) return;
 
     const { channelId, messageId } = config.cacheConfig;
-    const attachmentId = getAttachmentId(config.source.uri);
+    const pathname = extractPathname(config.source.uri);
 
-    if (!messageId || !config.source.uri || !channelId || !attachmentId) {
+    if (!messageId || !config.source.uri || !channelId || !pathname) {
       if (!messageId || !channelId) {
         console.warn(
           "Attempted to use cached attachment without passing the cacheConfig prop to the cached image component. Please make sure you're sending the channelId and messageId",
@@ -42,11 +39,11 @@ export const useCachedAttachment = (config: {
       }));
     }
 
-    if (!(await StreamMediaCache.checkIfLocalAttachment(channelId, messageId, attachmentId))) {
+    if (!(await StreamMediaCache.checkIfLocalAttachment(channelId, messageId, pathname))) {
       await StreamMediaCache.saveAttachment(
         channelId,
         messageId,
-        attachmentId,
+        pathname,
         config.source.uri as string,
       );
     }
@@ -56,7 +53,7 @@ export const useCachedAttachment = (config: {
       uri: `file://${StreamMediaCache.getStreamChannelMessageAttachmentDir(
         channelId,
         messageId,
-        attachmentId,
+        pathname,
       )}`,
     }));
   };

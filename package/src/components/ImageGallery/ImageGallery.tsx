@@ -48,7 +48,7 @@ import {
   ImageGridHandle,
 } from './components/ImageGridHandle';
 
-import { getAttachmentId } from '../CachedImages/useCachedAttachment';
+import { extractPathname } from '../CachedImages/utils';
 import StreamMediaCache from '../../StreamMediaCache';
 import { useImageGalleryContext } from '../../contexts/imageGalleryContext/ImageGalleryContext';
 import { useOverlayContext } from '../../contexts/overlayContext/OverlayContext';
@@ -403,15 +403,16 @@ export const ImageGallery = <
     const photo = photos[index.value];
     if (photo?.uri) {
       const { channelId = '', messageId = '', uri: url = '' } = photo;
-      const attachmentId = getAttachmentId(url) || '';
-      StreamMediaCache.checkIfLocalAttachment(channelId, messageId, attachmentId).then(
+      const filePathname = extractPathname(url) || '';
+      StreamMediaCache.checkIfLocalAttachment(channelId, messageId, filePathname).then(
         (existsOnCache) => {
+          console.log(existsOnCache, channelId, messageId, filePathname);
           Image.getSize(
             existsOnCache
               ? `file://${StreamMediaCache.getStreamChannelMessageAttachmentDir(
                   channelId,
                   messageId,
-                  attachmentId,
+                  filePathname,
                 )}`
               : url,
             (width, height) => {

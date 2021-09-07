@@ -64,7 +64,9 @@ describe('useCachedAttachment', () => {
 
     await waitFor(() => {
       expect(componentCB).toHaveBeenCalledWith({ uri: '' });
-      expect(componentCB).toHaveBeenCalledWith({ uri: 'file://channel-id/message-id/file-id' });
+      expect(componentCB).toHaveBeenCalledWith({
+        uri: 'file://channel-id/message-id/image-here.com___media___file-id',
+      });
     });
   });
 
@@ -82,11 +84,13 @@ describe('useCachedAttachment', () => {
       expect(mockedStreamMediaCache.saveAttachment).toHaveBeenCalledWith(
         'channel-id',
         'message-id',
-        'file-id',
+        'image-here.com___media___file-id',
         'https://image-here.com/media/file-id',
       );
       expect(componentCB).toHaveBeenCalledWith({ uri: '' });
-      expect(componentCB).toHaveBeenCalledWith({ uri: 'file://channel-id/message-id/file-id' });
+      expect(componentCB).toHaveBeenCalledWith({
+        uri: 'file://channel-id/message-id/image-here.com___media___file-id',
+      });
     });
   });
 
@@ -111,11 +115,13 @@ describe('useCachedAttachment', () => {
       expect(mockedStreamMediaCache.saveAttachment).toHaveBeenCalledWith(
         'channel-id',
         'message-id',
-        'file-id',
+        'image-here.com___media___file-id',
         'https://image-here.com/media/file-id?q=test',
       );
       expect(componentCB).toHaveBeenCalledWith({ uri: '' });
-      expect(componentCB).toHaveBeenCalledWith({ uri: 'file://channel-id/message-id/file-id' });
+      expect(componentCB).toHaveBeenCalledWith({
+        uri: 'file://channel-id/message-id/image-here.com___media___file-id',
+      });
     });
   });
 

@@ -65,7 +65,7 @@ describe('useCachedAvatar', () => {
     await waitFor(() => {
       expect(componentCB).toHaveBeenCalledWith({ uri: '' });
       expect(componentCB).toHaveBeenCalledWith({
-        uri: 'file://channel-id/https://image-here.com/media/file-id',
+        uri: 'file://channel-id/image-here.com___media___file-id',
       });
     });
   });
@@ -83,12 +83,12 @@ describe('useCachedAvatar', () => {
     await waitFor(() => {
       expect(mockedStreamMediaCache.saveAvatar).toHaveBeenCalledWith(
         'channel-id',
-        'https://image-here.com/media/file-id',
+        'image-here.com___media___file-id',
         'https://image-here.com/media/file-id',
       );
       expect(componentCB).toHaveBeenCalledWith({ uri: '' });
       expect(componentCB).toHaveBeenCalledWith({
-        uri: 'file://channel-id/https://image-here.com/media/file-id',
+        uri: 'file://channel-id/image-here.com___media___file-id',
       });
     });
   });
@@ -113,12 +113,12 @@ describe('useCachedAvatar', () => {
     await waitFor(() => {
       expect(mockedStreamMediaCache.saveAvatar).toHaveBeenCalledWith(
         'channel-id',
-        'https://image-here.com/media/file-id',
+        'image-here.com___media___file-id',
         'https://image-here.com/media/file-id?q=test',
       );
       expect(componentCB).toHaveBeenCalledWith({ uri: '' });
       expect(componentCB).toHaveBeenCalledWith({
-        uri: 'file://channel-id/https://image-here.com/media/file-id',
+        uri: 'file://channel-id/image-here.com___media___file-id',
       });
     });
   });

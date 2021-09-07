@@ -5,6 +5,8 @@ import StreamMediaCache from '../../StreamMediaCache';
 
 import type { ImageProps, ImageURISource } from 'react-native';
 
+import { extractPathname } from './utils';
+
 export const useCachedAvatar = (
   config: Omit<ImageProps, 'source'> & {
     channelId: string | undefined;
@@ -21,9 +23,9 @@ export const useCachedAvatar = (
 
     const { channelId } = config;
     const url = config.source.uri;
-    const parsedUrl = url?.includes('?') ? url.split('?')[0] : url;
+    const pathname = extractPathname(url);
 
-    if (!config.source.uri || !channelId || !parsedUrl) {
+    if (!config.source.uri || !channelId || !pathname) {
       if (!channelId) {
         console.warn(
           'Attempted to use cached avatar without passing the channelId prop to the cached image component. Falling back to network.',
@@ -35,13 +37,13 @@ export const useCachedAvatar = (
       }));
     }
 
-    if (!(await StreamMediaCache.checkIfLocalAvatar(channelId, parsedUrl))) {
-      await StreamMediaCache.saveAvatar(channelId, parsedUrl, config.source.uri as string);
+    if (!(await StreamMediaCache.checkIfLocalAvatar(channelId, pathname))) {
+      await StreamMediaCache.saveAvatar(channelId, pathname, config.source.uri as string);
     }
 
     setCachedSource((src) => ({
       ...src,
-      uri: `file://${StreamMediaCache.getStreamChannelAvatarDir(channelId, parsedUrl)}`,
+      uri: `file://${StreamMediaCache.getStreamChannelAvatarDir(channelId, pathname)}`,
     }));
   };
 
