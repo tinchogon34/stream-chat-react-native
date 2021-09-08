@@ -32,4 +32,5 @@ jobs:
       - name: Build
         run: yarn detox-sample-ios:build
       - name: Test
-        run: yarn detox-sample-ios:test
+        # Sudo is needed to run offline tests
+        run: sudo yarn detox-sample-ios:test

@@ -1,5 +1,5 @@
 const commonChannelListTests = () => {
-  describe(`Common channel list tests`, () => {
+  describe(`Basic channel list flow`, () => {
     beforeEach(async () => {
       await device.reloadReactNative();
       await waitFor(element(by.id('channel-list-messenger')))

@@ -32,4 +32,5 @@ jobs:
           api-level: 29
           target: google_apis
           avd-name: Pixel4
-          script: yarn detox-sample-android:test
+          # Sudo is needed to run offline tests
+          script: sudo yarn detox-sample-android:test
