@@ -1,3 +1,4 @@
 node_modules
 NEXT_RELEASE_CHANGELOG.md
 /.log/
+/examples/.DS_Store

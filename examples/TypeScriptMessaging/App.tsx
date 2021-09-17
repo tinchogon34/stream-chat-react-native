@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { LogBox, Platform, SafeAreaView, View, useColorScheme, StatusBar, Image } from 'react-native';
+import { LogBox, Platform, SafeAreaView, View, useColorScheme, StatusBar, Image, StyleSheet, Button, TouchableOpacity, Text } from 'react-native';
 import { DarkTheme, DefaultTheme, NavigationContainer, RouteProp } from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -20,7 +20,10 @@ import {
   ThreadContextValue,
   useAttachmentPickerContext,
   useOverlayContext,
+  AutoCompleteInput,
+  useMessageInputContext
 } from 'stream-chat-react-native';
+import {Svg, Path} from 'react-native-svg';
 
 import { useStreamChatTheme } from './useStreamChatTheme';
 
@@ -177,7 +180,7 @@ const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   return (
     <SafeAreaView>
       <Chat client={chatClient} i18nInstance={streami18n}>
-        <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread} forceAlignMessages='left' >
+        <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread} forceAlignMessages='left' Input={SplitChannelMessageInput}>
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}><Image source={{ uri: 'https://i.ibb.co/rfx5PCr/Screenshot-2021-02-24-at-14-20-57.png' }} style={{ height: '100%', width: '100%' }} resizeMode={'cover'} /></View>
             <MessageList<
@@ -203,6 +206,85 @@ const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+const SplitChannelMessageInput = () => {
+  const MAX_CHARACTERS = 28;
+  const [remainingCharacterCount, setRemainingCharacterCount] = useState<number>(0);
+
+  const { sendMessage, text } = useMessageInputContext();
+
+  useEffect(() => {
+    setRemainingCharacterCount(MAX_CHARACTERS - text.length);
+  }, [text])
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.inputContainer}>
+      <AutoCompleteInput additionalTextInputProps={{ style: styles.input }} />
+      </View>
+      <TouchableOpacity style={styles.sendButtonContainer} onPress={sendMessage} disabled={remainingCharacterCount < 0}>
+      <SendMessageIcon />
+      <Text style={styles.characterCount}>{remainingCharacterCount}</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+const SendMessageIcon = () => {
+  return (
+    <Svg
+      width={16}
+      height={16}
+      fill="none"
+    >
+      <Path
+        fill="#006CFF"
+        d="M8 4a1 1 0 01-1 1H1a1 1 0 00-1 1v2a1 1 0 001 1h6a1 1 0 011 1v2.586c0 .89 1.077 1.337 1.707.707l5.586-5.586a1 1 0 000-1.414L9.707.707C9.077.077 8 .523 8 1.414V4z"
+      />
+    </Svg>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+  },
+  inputContainer: {
+    height: 40,
+    flex: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#F2F2F2",
+    paddingVertical: 11,
+    paddingHorizontal: 8,
+  },
+  input: {
+    borderStyle: 'solid',
+    height: "100%",
+    paddingVertical: 0,
+  },
+  sendButtonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: "#F2F2F2",
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    marginLeft: 8,
+  },
+  characterCount: {
+    fontSize: 11,
+  },
+  sendButtonContent: {
+    display: 'flex',
+    flexDirection: 'column',
+
+  }
+});
 
 type ThreadScreenProps = {
   navigation: StackNavigationProp<ThreadRoute, 'Thread'>;
