@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { LogBox, Platform, SafeAreaView, View, useColorScheme, StatusBar } from 'react-native';
+import { LogBox, Platform, SafeAreaView, View, useColorScheme, StatusBar, Image } from 'react-native';
 import { DarkTheme, DefaultTheme, NavigationContainer, RouteProp } from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -127,8 +127,9 @@ const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   return (
     <SafeAreaView>
       <Chat client={chatClient} i18nInstance={streami18n}>
-        <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread}>
+        <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread} forceAlignMessages='left' >
           <View style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}><Image source={{ uri: 'https://i.ibb.co/rfx5PCr/Screenshot-2021-02-24-at-14-20-57.png' }} style={{ height: '100%', width: '100%' }} resizeMode={'cover'} /></View>
             <MessageList<
               LocalAttachmentType,
               LocalChannelType,
@@ -153,6 +154,7 @@ const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   );
 };
 
+const CustomMessage
 type ThreadScreenProps = {
   navigation: StackNavigationProp<ThreadRoute, 'Thread'>;
   route: RouteProp<ThreadRoute, 'Thread'>;
@@ -206,7 +208,19 @@ const Stack = createStackNavigator<NavigationParamsList>();
 
 type AppContextType = {
   channel:
-    | ChannelType<
+  | ChannelType<
+    LocalAttachmentType,
+    LocalChannelType,
+    LocalCommandType,
+    LocalEventType,
+    LocalMessageType,
+    LocalResponseType,
+    LocalUserType
+  >
+  | undefined;
+  setChannel: React.Dispatch<
+    React.SetStateAction<
+      | ChannelType<
         LocalAttachmentType,
         LocalChannelType,
         LocalCommandType,
@@ -215,37 +229,12 @@ type AppContextType = {
         LocalResponseType,
         LocalUserType
       >
-    | undefined;
-  setChannel: React.Dispatch<
-    React.SetStateAction<
-      | ChannelType<
-          LocalAttachmentType,
-          LocalChannelType,
-          LocalCommandType,
-          LocalEventType,
-          LocalMessageType,
-          LocalResponseType,
-          LocalUserType
-        >
       | undefined
     >
   >;
   setThread: React.Dispatch<
     React.SetStateAction<
       | ThreadContextValue<
-          LocalAttachmentType,
-          LocalChannelType,
-          LocalCommandType,
-          LocalEventType,
-          LocalMessageType,
-          LocalResponseType,
-          LocalUserType
-        >['thread']
-      | undefined
-    >
-  >;
-  thread:
-    | ThreadContextValue<
         LocalAttachmentType,
         LocalChannelType,
         LocalCommandType,
@@ -254,7 +243,20 @@ type AppContextType = {
         LocalResponseType,
         LocalUserType
       >['thread']
-    | undefined;
+      | undefined
+    >
+  >;
+  thread:
+  | ThreadContextValue<
+    LocalAttachmentType,
+    LocalChannelType,
+    LocalCommandType,
+    LocalEventType,
+    LocalMessageType,
+    LocalResponseType,
+    LocalUserType
+  >['thread']
+  | undefined;
 };
 
 const AppContext = React.createContext({} as AppContextType);
