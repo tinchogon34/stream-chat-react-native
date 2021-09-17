@@ -1,5 +1,15 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { LogBox, Platform, SafeAreaView, View, useColorScheme, StatusBar, Image, StyleSheet, Button, TouchableOpacity, Text } from 'react-native';
+import {
+  Image,
+  LogBox,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from 'react-native';
 import { DarkTheme, DefaultTheme, NavigationContainer, RouteProp } from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -9,6 +19,7 @@ import {
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChannelSort, Channel as ChannelType, StreamChat } from 'stream-chat';
 import {
+  AutoCompleteInput,
   Channel,
   ChannelList,
   Chat,
@@ -19,11 +30,10 @@ import {
   Thread,
   ThreadContextValue,
   useAttachmentPickerContext,
+  useMessageInputContext,
   useOverlayContext,
-  AutoCompleteInput,
-  useMessageInputContext
 } from 'stream-chat-react-native';
-import {Svg, Path} from 'react-native-svg';
+import { Path, Svg } from 'react-native-svg';
 
 import { useStreamChatTheme } from './useStreamChatTheme';
 
@@ -135,7 +145,12 @@ const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   return (
     <SafeAreaView>
       <Chat client={chatClient} i18nInstance={streami18n}>
-        <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread} forceAlignMessages='left' >
+        <Channel
+          channel={channel}
+          forceAlignMessages='left'
+          keyboardVerticalOffset={headerHeight}
+          thread={thread}
+        >
           <View style={{ flex: 1 }}>
             <MessageList<
               LocalAttachmentType,
@@ -146,8 +161,8 @@ const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
               LocalResponseType,
               LocalUserType
             >
-              onThreadSelect={(thread) => {
-                setThread(thread);
+              onThreadSelect={(selectedThread) => {
+                setThread(selectedThread);
                 if (channel?.id) {
                   navigation.navigate('Thread');
                 }
@@ -180,9 +195,21 @@ const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   return (
     <SafeAreaView>
       <Chat client={chatClient} i18nInstance={streami18n}>
-        <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread} forceAlignMessages='left' Input={SplitChannelMessageInput}>
+        <Channel
+          channel={channel}
+          forceAlignMessages='left'
+          Input={SplitChannelMessageInput}
+          keyboardVerticalOffset={headerHeight}
+          thread={thread}
+        >
           <View style={{ flex: 1 }}>
-            <View style={{ flex: 1 }}><Image source={{ uri: 'https://i.ibb.co/rfx5PCr/Screenshot-2021-02-24-at-14-20-57.png' }} style={{ height: '100%', width: '100%' }} resizeMode={'cover'} /></View>
+            <View style={{ flex: 1 }}>
+              <Image
+                resizeMode={'cover'}
+                source={{ uri: 'https://i.ibb.co/rfx5PCr/Screenshot-2021-02-24-at-14-20-57.png' }}
+                style={{ height: '100%', width: '100%' }}
+              />
+            </View>
             <MessageList<
               LocalAttachmentType,
               LocalChannelType,
@@ -192,8 +219,8 @@ const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
               LocalResponseType,
               LocalUserType
             >
-              onThreadSelect={(thread) => {
-                setThread(thread);
+              onThreadSelect={(selectedThread) => {
+                setThread(selectedThread);
                 if (channel?.id) {
                   navigation.navigate('Thread');
                 }
@@ -215,75 +242,68 @@ const SplitChannelMessageInput = () => {
 
   useEffect(() => {
     setRemainingCharacterCount(MAX_CHARACTERS - text.length);
-  }, [text])
+  }, [text]);
 
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-      <AutoCompleteInput additionalTextInputProps={{ style: styles.input }} />
+        <AutoCompleteInput additionalTextInputProps={{ style: styles.input }} />
       </View>
-      <TouchableOpacity style={styles.sendButtonContainer} onPress={sendMessage} disabled={remainingCharacterCount < 0}>
-      <SendMessageIcon />
-      <Text style={styles.characterCount}>{remainingCharacterCount}</Text>
+      <TouchableOpacity
+        disabled={remainingCharacterCount < 0}
+        onPress={sendMessage}
+        style={styles.sendButtonContainer}
+      >
+        <SendMessageIcon />
+        <Text style={styles.characterCount}>{remainingCharacterCount}</Text>
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
-const SendMessageIcon = () => {
-  return (
-    <Svg
-      width={16}
-      height={16}
-      fill="none"
-    >
-      <Path
-        fill="#006CFF"
-        d="M8 4a1 1 0 01-1 1H1a1 1 0 00-1 1v2a1 1 0 001 1h6a1 1 0 011 1v2.586c0 .89 1.077 1.337 1.707.707l5.586-5.586a1 1 0 000-1.414L9.707.707C9.077.077 8 .523 8 1.414V4z"
-      />
-    </Svg>
-  )
-}
+const SendMessageIcon = () => (
+  <Svg fill='none' height={16} width={16}>
+    <Path
+      d='M8 4a1 1 0 01-1 1H1a1 1 0 00-1 1v2a1 1 0 001 1h6a1 1 0 011 1v2.586c0 .89 1.077 1.337 1.707.707l5.586-5.586a1 1 0 000-1.414L9.707.707C9.077.077 8 .523 8 1.414V4z'
+      fill='#006CFF'
+    />
+  </Svg>
+);
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-  },
-  inputContainer: {
-    height: 40,
-    flex: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#F2F2F2",
-    paddingVertical: 11,
-    paddingHorizontal: 8,
-  },
-  input: {
-    borderStyle: 'solid',
-    height: "100%",
-    paddingVertical: 0,
-  },
-  sendButtonContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: "#F2F2F2",
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 40,
-    height: 40,
-    marginLeft: 8,
-  },
   characterCount: {
     fontSize: 11,
   },
-  sendButtonContent: {
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  input: {
+    borderStyle: 'solid',
+    height: '100%',
+    paddingVertical: 0,
+  },
+  inputContainer: {
+    borderColor: '#F2F2F2',
+    borderRadius: 8,
+    borderWidth: 1,
+    flex: 8,
+    height: 40,
+    paddingHorizontal: 8,
+    paddingVertical: 11,
+  },
+  sendButtonContainer: {
+    alignItems: 'center',
+    backgroundColor: '#F2F2F2',
+    borderRadius: 8,
     display: 'flex',
     flexDirection: 'column',
-
-  }
+    height: 40,
+    justifyContent: 'center',
+    marginLeft: 8,
+    width: 40,
+  },
 });
 
 type ThreadScreenProps = {
@@ -340,19 +360,7 @@ const Stack = createStackNavigator<NavigationParamsList>();
 
 type AppContextType = {
   channel:
-  | ChannelType<
-    LocalAttachmentType,
-    LocalChannelType,
-    LocalCommandType,
-    LocalEventType,
-    LocalMessageType,
-    LocalResponseType,
-    LocalUserType
-  >
-  | undefined;
-  setChannel: React.Dispatch<
-    React.SetStateAction<
-      | ChannelType<
+    | ChannelType<
         LocalAttachmentType,
         LocalChannelType,
         LocalCommandType,
@@ -361,12 +369,37 @@ type AppContextType = {
         LocalResponseType,
         LocalUserType
       >
+    | undefined;
+  setChannel: React.Dispatch<
+    React.SetStateAction<
+      | ChannelType<
+          LocalAttachmentType,
+          LocalChannelType,
+          LocalCommandType,
+          LocalEventType,
+          LocalMessageType,
+          LocalResponseType,
+          LocalUserType
+        >
       | undefined
     >
   >;
   setThread: React.Dispatch<
     React.SetStateAction<
       | ThreadContextValue<
+          LocalAttachmentType,
+          LocalChannelType,
+          LocalCommandType,
+          LocalEventType,
+          LocalMessageType,
+          LocalResponseType,
+          LocalUserType
+        >['thread']
+      | undefined
+    >
+  >;
+  thread:
+    | ThreadContextValue<
         LocalAttachmentType,
         LocalChannelType,
         LocalCommandType,
@@ -375,20 +408,7 @@ type AppContextType = {
         LocalResponseType,
         LocalUserType
       >['thread']
-      | undefined
-    >
-  >;
-  thread:
-  | ThreadContextValue<
-    LocalAttachmentType,
-    LocalChannelType,
-    LocalCommandType,
-    LocalEventType,
-    LocalMessageType,
-    LocalResponseType,
-    LocalUserType
-  >['thread']
-  | undefined;
+    | undefined;
 };
 
 const AppContext = React.createContext({} as AppContextType);
