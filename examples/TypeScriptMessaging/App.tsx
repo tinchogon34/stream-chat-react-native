@@ -26,6 +26,10 @@ import { useStreamChatTheme } from './useStreamChatTheme';
 
 LogBox.ignoreAllLogs(true);
 
+// If true, show the split channel view, rather than the regular
+// channel view.
+const DEBUG_SPLIT_CHANNEL = true;
+
 type LocalAttachmentType = Record<string, unknown>;
 type LocalChannelType = Record<string, unknown>;
 type LocalCommandType = string;
@@ -94,7 +98,8 @@ const ChannelListScreen: React.FC<ChannelListScreenProps> = ({ navigation }) => 
           filters={memoizedFilters}
           onSelect={(channel) => {
             setChannel(channel);
-            navigation.navigate('Channel');
+            const channelView = DEBUG_SPLIT_CHANNEL ? 'SplitChannel' : 'Channel';
+            navigation.navigate(channelView);
           }}
           options={options}
           sort={sort}
@@ -109,6 +114,51 @@ type ChannelScreenProps = {
 };
 
 const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
+  const { channel, setThread, thread } = useContext(AppContext);
+  const headerHeight = useHeaderHeight();
+  const { setTopInset } = useAttachmentPickerContext();
+  const { overlay } = useOverlayContext();
+
+  useEffect(() => {
+    navigation.setOptions({
+      gestureEnabled: Platform.OS === 'ios' && overlay === 'none',
+    });
+  }, [overlay]);
+
+  useEffect(() => {
+    setTopInset(headerHeight);
+  }, [headerHeight]);
+
+  return (
+    <SafeAreaView>
+      <Chat client={chatClient} i18nInstance={streami18n}>
+        <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread} forceAlignMessages='left' >
+          <View style={{ flex: 1 }}>
+            <MessageList<
+              LocalAttachmentType,
+              LocalChannelType,
+              LocalCommandType,
+              LocalEventType,
+              LocalMessageType,
+              LocalResponseType,
+              LocalUserType
+            >
+              onThreadSelect={(thread) => {
+                setThread(thread);
+                if (channel?.id) {
+                  navigation.navigate('Thread');
+                }
+              }}
+            />
+            <MessageInput />
+          </View>
+        </Channel>
+      </Chat>
+    </SafeAreaView>
+  );
+};
+
+const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   const { channel, setThread, thread } = useContext(AppContext);
   const headerHeight = useHeaderHeight();
   const { setTopInset } = useAttachmentPickerContext();
@@ -336,6 +386,15 @@ const App = () => {
               <Stack.Screen
                 component={ChannelScreen}
                 name='Channel'
+                options={() => ({
+                  headerBackTitle: 'Back',
+                  headerRight: () => <></>,
+                  headerTitle: channel?.data?.name,
+                })}
+              />
+              <Stack.Screen
+                component={SplitChannelScreen}
+                name='SplitChannel'
                 options={() => ({
                   headerBackTitle: 'Back',
                   headerRight: () => <></>,
