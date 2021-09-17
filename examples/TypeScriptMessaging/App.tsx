@@ -204,7 +204,6 @@ const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   );
 };
 
-const CustomMessage
 type ThreadScreenProps = {
   navigation: StackNavigationProp<ThreadRoute, 'Thread'>;
   route: RouteProp<ThreadRoute, 'Thread'>;
@@ -250,9 +249,10 @@ const ThreadScreen: React.FC<ThreadScreenProps> = ({ navigation }) => {
 };
 
 type ChannelRoute = { Channel: undefined };
+type SplitChannelRoute = { SplitChannel: undefined };
 type ChannelListRoute = { ChannelList: undefined };
 type ThreadRoute = { Thread: undefined };
-type NavigationParamsList = ChannelRoute & ChannelListRoute & ThreadRoute;
+type NavigationParamsList = ChannelRoute & SplitChannelRoute & ChannelListRoute & ThreadRoute;
 
 const Stack = createStackNavigator<NavigationParamsList>();
 
