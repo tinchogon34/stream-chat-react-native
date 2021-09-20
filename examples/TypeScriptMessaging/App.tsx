@@ -1,11 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import {
-  LogBox,
-  Platform,
-  SafeAreaView,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { LogBox, Platform, SafeAreaView, useColorScheme, View } from 'react-native';
 import { DarkTheme, DefaultTheme, NavigationContainer, RouteProp } from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -25,7 +19,19 @@ import {
 } from 'stream-chat-react-native';
 
 import { useStreamChatTheme } from './useStreamChatTheme';
-import { AppContext, ChannelScreen, chatClient, LocalAttachmentType, LocalChannelType, LocalCommandType, LocalEventType, LocalMessageType, LocalResponseType, LocalUserType, streami18n } from './ChannelScreen';
+import {
+  AppContext,
+  ChannelScreen,
+  chatClient,
+  LocalAttachmentType,
+  LocalChannelType,
+  LocalCommandType,
+  LocalEventType,
+  LocalMessageType,
+  LocalResponseType,
+  LocalUserType,
+  streami18n,
+} from './ChannelScreen';
 import { SplitChannelScreen } from './SplitChannelScreen';
 
 LogBox.ignoreAllLogs(true);
@@ -33,7 +39,6 @@ LogBox.ignoreAllLogs(true);
 // If true, show the split channel view, rather than the regular
 // channel view.
 const DEBUG_SPLIT_CHANNEL = true;
-
 
 const userToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicm9uIn0.eRVjxLvd4aqCEHY_JRa97g6k7WpHEhxL7Z4K4yTot1c';
@@ -93,9 +98,6 @@ const ChannelListScreen: React.FC<ChannelListScreenProps> = ({ navigation }) => 
   );
 };
 
-
-
-
 type ThreadScreenProps = {
   navigation: StackNavigationProp<ThreadRoute, 'Thread'>;
   route: RouteProp<ThreadRoute, 'Thread'>;
@@ -114,7 +116,18 @@ const ThreadScreen: React.FC<ThreadScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <Chat client={chatClient} i18nInstance={streami18n}>
+      <Chat
+        client={chatClient}
+        i18nInstance={streami18n}
+        style={{
+          messageSimple: {
+            content: {},
+            container: {
+              marginTop: 20,
+            },
+          },
+        }}
+      >
         <Channel channel={channel} keyboardVerticalOffset={headerHeight} thread={thread}>
           <View
             style={{
@@ -147,8 +160,6 @@ type ThreadRoute = { Thread: undefined };
 type NavigationParamsList = ChannelRoute & SplitChannelRoute & ChannelListRoute & ThreadRoute;
 
 const Stack = createStackNavigator<NavigationParamsList>();
-
-
 
 const App = () => {
   const colorScheme = useColorScheme();
