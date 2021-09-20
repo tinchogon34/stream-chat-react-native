@@ -1,12 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
-  Image,
   LogBox,
   Platform,
   SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -17,27 +13,20 @@ import {
   useHeaderHeight,
 } from '@react-navigation/stack';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChannelSort, Channel as ChannelType, StreamChat } from 'stream-chat';
+import { ChannelSort, Channel as ChannelType } from 'stream-chat';
 import {
-  AutoCompleteInput,
   Channel,
   ChannelList,
   Chat,
-  MessageAvatar,
-  MessageInput,
-  MessageList,
   OverlayProvider,
-  Streami18n,
   Thread,
   ThreadContextValue,
-  useAttachmentPickerContext,
-  useMessageInputContext,
   useOverlayContext,
 } from 'stream-chat-react-native';
-import { Path, Svg } from 'react-native-svg';
 
 import { useStreamChatTheme } from './useStreamChatTheme';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { AppContext, ChannelScreen, chatClient, LocalAttachmentType, LocalChannelType, LocalCommandType, LocalEventType, LocalMessageType, LocalResponseType, LocalUserType, streami18n } from './ChannelScreen';
+import { SplitChannelScreen } from './SplitChannelScreen';
 
 LogBox.ignoreAllLogs(true);
 
@@ -45,24 +34,7 @@ LogBox.ignoreAllLogs(true);
 // channel view.
 const DEBUG_SPLIT_CHANNEL = true;
 
-type LocalAttachmentType = Record<string, unknown>;
-type LocalChannelType = Record<string, unknown>;
-type LocalCommandType = string;
-type LocalEventType = Record<string, unknown>;
-type LocalMessageType = Record<string, unknown>;
-type LocalResponseType = Record<string, unknown>;
-type LocalUserType = Record<string, unknown>;
 
-const chatClient =
-  StreamChat.getInstance<
-    LocalAttachmentType,
-    LocalChannelType,
-    LocalCommandType,
-    LocalEventType,
-    LocalMessageType,
-    LocalResponseType,
-    LocalUserType
-  >('q95x9hkbyd6p');
 const userToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicm9uIn0.eRVjxLvd4aqCEHY_JRa97g6k7WpHEhxL7Z4K4yTot1c';
 const user = {
@@ -85,9 +57,6 @@ const options = {
  * Start playing with streami18n instance here:
  * Please refer to description of this PR for details: https://github.com/GetStream/stream-chat-react-native/pull/150
  */
-const streami18n = new Streami18n({
-  language: 'en',
-});
 
 type ChannelListScreenProps = {
   navigation: StackNavigationProp<NavigationParamsList, 'ChannelList'>;
@@ -124,212 +93,8 @@ const ChannelListScreen: React.FC<ChannelListScreenProps> = ({ navigation }) => 
   );
 };
 
-type ChannelScreenProps = {
-  navigation: StackNavigationProp<NavigationParamsList, 'Channel'>;
-};
 
-const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
-  const { channel, setThread, thread } = useContext(AppContext);
-  const headerHeight = useHeaderHeight();
-  const { setTopInset } = useAttachmentPickerContext();
-  const { overlay } = useOverlayContext();
 
-  useEffect(() => {
-    navigation.setOptions({
-      gestureEnabled: Platform.OS === 'ios' && overlay === 'none',
-    });
-  }, [overlay]);
-
-  useEffect(() => {
-    setTopInset(headerHeight);
-  }, [headerHeight]);
-
-  return (
-    <SafeAreaView>
-      <Chat client={chatClient} i18nInstance={streami18n}>
-        <Channel
-          channel={channel}
-          forceAlignMessages='left'
-          keyboardVerticalOffset={headerHeight}
-          thread={thread}
-        >
-          <View style={{ flex: 1 }}>
-            <MessageList<
-              LocalAttachmentType,
-              LocalChannelType,
-              LocalCommandType,
-              LocalEventType,
-              LocalMessageType,
-              LocalResponseType,
-              LocalUserType
-            >
-              onThreadSelect={(selectedThread) => {
-                setThread(selectedThread);
-                if (channel?.id) {
-                  navigation.navigate('Thread');
-                }
-              }}
-            />
-            <MessageInput />
-          </View>
-        </Channel>
-      </Chat>
-    </SafeAreaView>
-  );
-};
-
-const TopFloatingMessageAvatar = () => (<MessageAvatar align='left' />)
-
-const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
-  const { channel, setThread, thread } = useContext(AppContext);
-  const headerHeight = useHeaderHeight();
-  const { setTopInset } = useAttachmentPickerContext();
-  const { overlay } = useOverlayContext();
-
-  useEffect(() => {
-    navigation.setOptions({
-      gestureEnabled: Platform.OS === 'ios' && overlay === 'none',
-    });
-  }, [overlay]);
-
-  useEffect(() => {
-    setTopInset(headerHeight);
-  }, [headerHeight]);
-
-  return (
-    <SafeAreaView>
-      <Chat client={chatClient} i18nInstance={streami18n}>
-        <Channel
-          channel={channel}
-          forceAlignMessages='left'
-          Input={SplitChannelMessageInput}
-          keyboardVerticalOffset={headerHeight}
-          MessageAvatar={() => (<TopFloatingMessageAvatar />)}
-          MessageHeader={({ message }) => (
-            <View style={styles.headerContainer}>
-              <Text style={styles.headerName}>{message.user?.name}</Text>
-              <Text style={styles.headerMessageTime}>{formatDistanceToNow(new Date(message.created_at))}</Text>
-            </View>
-          )}
-          MessageFooter={() => null}
-          thread={thread}
-        >
-          <View style={{ flex: 1 }}>
-            <View style={{ flex: 1 }}>
-              <Image
-                resizeMode={'cover'}
-                source={{ uri: 'https://i.ibb.co/rfx5PCr/Screenshot-2021-02-24-at-14-20-57.png' }}
-                style={{ height: '100%', width: '100%' }}
-              />
-            </View>
-            <MessageList<
-              LocalAttachmentType,
-              LocalChannelType,
-              LocalCommandType,
-              LocalEventType,
-              LocalMessageType,
-              LocalResponseType,
-              LocalUserType
-            >
-              onThreadSelect={(selectedThread) => {
-                setThread(selectedThread);
-                if (channel?.id) {
-                  navigation.navigate('Thread');
-                }
-              }}
-            />
-            <MessageInput />
-          </View>
-        </Channel>
-      </Chat>
-    </SafeAreaView>
-  );
-};
-
-const SplitChannelMessageInput = () => {
-  const MAX_CHARACTERS = 28;
-  const [remainingCharacterCount, setRemainingCharacterCount] = useState<number>(0);
-
-  const { sendMessage, text } = useMessageInputContext();
-
-  useEffect(() => {
-    setRemainingCharacterCount(MAX_CHARACTERS - text.length);
-  }, [text]);
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <AutoCompleteInput additionalTextInputProps={{ style: styles.input }} />
-      </View>
-      <TouchableOpacity
-        disabled={remainingCharacterCount < 0}
-        onPress={sendMessage}
-        style={styles.sendButtonContainer}
-      >
-        <SendMessageIcon />
-        <Text style={styles.characterCount}>{remainingCharacterCount}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const SendMessageIcon = () => (
-  <Svg fill='none' height={16} width={16}>
-    <Path
-      d='M8 4a1 1 0 01-1 1H1a1 1 0 00-1 1v2a1 1 0 001 1h6a1 1 0 011 1v2.586c0 .89 1.077 1.337 1.707.707l5.586-5.586a1 1 0 000-1.414L9.707.707C9.077.077 8 .523 8 1.414V4z'
-      fill='#006CFF'
-    />
-  </Svg>
-);
-
-const styles = StyleSheet.create({
-  characterCount: {
-    fontSize: 11,
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-  },
-  headerName: {
-    color: "#0E1621",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  headerMessageTime: {
-    color: "#8A898E",
-    fontWeight: "400",
-    fontSize: 12
-  },
-  input: {
-    borderStyle: 'solid',
-    height: '100%',
-    paddingVertical: 0,
-  },
-  inputContainer: {
-    borderColor: '#F2F2F2',
-    borderRadius: 8,
-    borderWidth: 1,
-    flex: 8,
-    height: 40,
-    paddingHorizontal: 8,
-    paddingVertical: 11,
-  },
-  sendButtonContainer: {
-    alignItems: 'center',
-    backgroundColor: '#F2F2F2',
-    borderRadius: 8,
-    display: 'flex',
-    flexDirection: 'column',
-    height: 40,
-    justifyContent: 'center',
-    marginLeft: 8,
-    width: 40,
-  },
-});
 
 type ThreadScreenProps = {
   navigation: StackNavigationProp<ThreadRoute, 'Thread'>;
@@ -383,60 +148,7 @@ type NavigationParamsList = ChannelRoute & SplitChannelRoute & ChannelListRoute 
 
 const Stack = createStackNavigator<NavigationParamsList>();
 
-type AppContextType = {
-  channel:
-  | ChannelType<
-    LocalAttachmentType,
-    LocalChannelType,
-    LocalCommandType,
-    LocalEventType,
-    LocalMessageType,
-    LocalResponseType,
-    LocalUserType
-  >
-  | undefined;
-  setChannel: React.Dispatch<
-    React.SetStateAction<
-      | ChannelType<
-        LocalAttachmentType,
-        LocalChannelType,
-        LocalCommandType,
-        LocalEventType,
-        LocalMessageType,
-        LocalResponseType,
-        LocalUserType
-      >
-      | undefined
-    >
-  >;
-  setThread: React.Dispatch<
-    React.SetStateAction<
-      | ThreadContextValue<
-        LocalAttachmentType,
-        LocalChannelType,
-        LocalCommandType,
-        LocalEventType,
-        LocalMessageType,
-        LocalResponseType,
-        LocalUserType
-      >['thread']
-      | undefined
-    >
-  >;
-  thread:
-  | ThreadContextValue<
-    LocalAttachmentType,
-    LocalChannelType,
-    LocalCommandType,
-    LocalEventType,
-    LocalMessageType,
-    LocalResponseType,
-    LocalUserType
-  >['thread']
-  | undefined;
-};
 
-const AppContext = React.createContext({} as AppContextType);
 
 const App = () => {
   const colorScheme = useColorScheme();

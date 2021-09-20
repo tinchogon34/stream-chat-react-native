@@ -7044,10 +7044,10 @@ stream-buffers@~2.2.0:
   resolved "https://registry.yarnpkg.com/stream-buffers/-/stream-buffers-2.2.0.tgz#91d5f5130d1cef96dcfa7f726945188741d09ee4"
   integrity sha1-kdX1Ew0c75bc+n9yaUUYh0HQnuQ=
 
-stream-chat-react-native-core@3.8.2:
-  version "3.8.2"
-  resolved "https://registry.yarnpkg.com/stream-chat-react-native-core/-/stream-chat-react-native-core-3.8.2.tgz#b9fde1dc2cca8b0525abbb921f3a0378281978e0"
-  integrity sha512-5ynwpBqTEHCr6YcKx4i01iPCAcWMbFgqyYQISSHPtdsNCHCri8ngz6AxgxC0Yx4teZnamEVBSLQqN000hUP1Gg==
+stream-chat-react-native-core@3.8.3:
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/stream-chat-react-native-core/-/stream-chat-react-native-core-3.8.3.tgz#439b3195ac140c85d0be9016a310ecaabc04a288"
+  integrity sha512-Oe8Wr9U9DJchfTTFoRT96oJWZMumZOltZLc6aksxGQrmwWQ/H8zV41gG9iDiPdTlqQ8pmtlLiv7ASmHxhC/I1A==
   dependencies:
     "@babel/runtime" "7.13.10"
     "@gorhom/bottom-sheet" "3.6.4"
@@ -7062,13 +7062,13 @@ stream-chat-react-native-core@3.8.2:
     react-native-markdown-package "1.8.1"
     stream-chat "~3.13.1"
 
-"stream-chat-react-native-core@link:../../package":
-  version "0.0.0"
-  uid ""
-
-"stream-chat-react-native@link:../../package/native-package":
-  version "0.0.0"
-  uid ""
+stream-chat-react-native@^3.8.3:
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/stream-chat-react-native/-/stream-chat-react-native-3.8.3.tgz#acb6fe0e42599b1007643e585d0bccd88eca8aee"
+  integrity sha512-RrVKzCsQ6bXXRqtUhNMP+GYxdpKQzHPw5bGXR8jBwcSBUTeChP6eOO4qMe4RjQYDphDfi8xEczzNDwHEUDvS7w==
+  dependencies:
+    es6-symbol "^3.1.3"
+    stream-chat-react-native-core "3.8.3"
 
 stream-chat@~3.13.1:
   version "3.13.1"
