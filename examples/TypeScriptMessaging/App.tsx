@@ -23,6 +23,7 @@ import {
   Channel,
   ChannelList,
   Chat,
+  MessageAvatar,
   MessageInput,
   MessageList,
   OverlayProvider,
@@ -36,6 +37,7 @@ import {
 import { Path, Svg } from 'react-native-svg';
 
 import { useStreamChatTheme } from './useStreamChatTheme';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 LogBox.ignoreAllLogs(true);
 
@@ -176,6 +178,8 @@ const ChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   );
 };
 
+const TopFloatingMessageAvatar = () => (<MessageAvatar align='left' />)
+
 const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
   const { channel, setThread, thread } = useContext(AppContext);
   const headerHeight = useHeaderHeight();
@@ -200,6 +204,14 @@ const SplitChannelScreen: React.FC<ChannelScreenProps> = ({ navigation }) => {
           forceAlignMessages='left'
           Input={SplitChannelMessageInput}
           keyboardVerticalOffset={headerHeight}
+          MessageAvatar={() => (<TopFloatingMessageAvatar />)}
+          MessageHeader={({ message }) => (
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerName}>{message.user?.name}</Text>
+              <Text style={styles.headerMessageTime}>{formatDistanceToNow(new Date(message.created_at))}</Text>
+            </View>
+          )}
+          MessageFooter={() => null}
           thread={thread}
         >
           <View style={{ flex: 1 }}>
@@ -278,6 +290,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+  },
+  headerName: {
+    color: "#0E1621",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  headerMessageTime: {
+    color: "#8A898E",
+    fontWeight: "400",
+    fontSize: 12
   },
   input: {
     borderStyle: 'solid',
@@ -360,7 +385,19 @@ const Stack = createStackNavigator<NavigationParamsList>();
 
 type AppContextType = {
   channel:
-    | ChannelType<
+  | ChannelType<
+    LocalAttachmentType,
+    LocalChannelType,
+    LocalCommandType,
+    LocalEventType,
+    LocalMessageType,
+    LocalResponseType,
+    LocalUserType
+  >
+  | undefined;
+  setChannel: React.Dispatch<
+    React.SetStateAction<
+      | ChannelType<
         LocalAttachmentType,
         LocalChannelType,
         LocalCommandType,
@@ -369,37 +406,12 @@ type AppContextType = {
         LocalResponseType,
         LocalUserType
       >
-    | undefined;
-  setChannel: React.Dispatch<
-    React.SetStateAction<
-      | ChannelType<
-          LocalAttachmentType,
-          LocalChannelType,
-          LocalCommandType,
-          LocalEventType,
-          LocalMessageType,
-          LocalResponseType,
-          LocalUserType
-        >
       | undefined
     >
   >;
   setThread: React.Dispatch<
     React.SetStateAction<
       | ThreadContextValue<
-          LocalAttachmentType,
-          LocalChannelType,
-          LocalCommandType,
-          LocalEventType,
-          LocalMessageType,
-          LocalResponseType,
-          LocalUserType
-        >['thread']
-      | undefined
-    >
-  >;
-  thread:
-    | ThreadContextValue<
         LocalAttachmentType,
         LocalChannelType,
         LocalCommandType,
@@ -408,7 +420,20 @@ type AppContextType = {
         LocalResponseType,
         LocalUserType
       >['thread']
-    | undefined;
+      | undefined
+    >
+  >;
+  thread:
+  | ThreadContextValue<
+    LocalAttachmentType,
+    LocalChannelType,
+    LocalCommandType,
+    LocalEventType,
+    LocalMessageType,
+    LocalResponseType,
+    LocalUserType
+  >['thread']
+  | undefined;
 };
 
 const AppContext = React.createContext({} as AppContextType);
