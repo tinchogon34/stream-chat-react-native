@@ -21,6 +21,7 @@ import { useChatContext } from '../chatContext/ChatContext';
 import { ChannelContextValue, useChannelContext } from '../channelContext/ChannelContext';
 import { useThreadContext } from '../threadContext/ThreadContext';
 import { getDisplayName } from '../utils/getDisplayName';
+import { useCooldown } from '../../components/MessageInput/hooks/useCooldown';
 
 import {
   ACITriggerSettings,
@@ -36,6 +37,7 @@ import type { TextInput, TextInputProps } from 'react-native';
 
 import type { AttachButtonProps } from '../../components/MessageInput/AttachButton';
 import type { CommandsButtonProps } from '../../components/MessageInput/CommandsButton';
+import type { CooldownTimerProps } from '../../components/MessageInput/CooldownTimer';
 import type { FileUploadPreviewProps } from '../../components/MessageInput/FileUploadPreview';
 import type { ImageUploadPreviewProps } from '../../components/MessageInput/ImageUploadPreview';
 import type { InputButtonsProps } from '../../components/MessageInput/InputButtons';
@@ -54,7 +56,6 @@ import type {
   DefaultUserType,
   UnknownType,
 } from '../../types/types';
-import { CooldownTimerProps, useCooldown } from '../../components/MessageInput/CooldownTimer';
 
 const MIME_TYPE_OCTET_STREAM = 'application/octet-stream';
 
@@ -449,8 +450,7 @@ export const MessageInputProvider = <
   }>({});
   const [giphyActive, setGiphyActive] = useState(false);
   const [sendThreadMessageInChannel, setSendThreadMessageInChannel] = useState(false);
-  const { CooldownTimer, editing, hasFilePicker, hasImagePicker, initialValue, maxNumberOfFiles } =
-    value;
+  const { editing, hasFilePicker, hasImagePicker, initialValue, maxNumberOfFiles } = value;
   const {
     fileUploads,
     imageUploads,
@@ -828,7 +828,7 @@ export const MessageInputProvider = <
     }
     const { file, id } = newFile;
 
-    await setFileUploads((prevFileUploads) =>
+    setFileUploads((prevFileUploads) =>
       prevFileUploads.map((fileUpload) => {
         if (fileUpload.id === id) {
           return {
@@ -1036,7 +1036,6 @@ export const MessageInputProvider = <
     asyncUploads,
     closeAttachmentPicker,
     cooldownEndsAt,
-    CooldownTimer,
     fileUploads,
     giphyActive,
     imageUploads,
